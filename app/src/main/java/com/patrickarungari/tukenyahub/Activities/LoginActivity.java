@@ -260,6 +260,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 afteranimationView.setVisibility(VISIBLE);
+                requestStoragePermission();
             }
 
         });
