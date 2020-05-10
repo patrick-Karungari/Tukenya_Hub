@@ -113,9 +113,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         createPermissionListeners();
-
-        //  startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        //finish();
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -123,13 +120,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void requestStoragePermission() {
-        new Thread(() -> Dexter.withContext(this)
+        new Thread(Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CAMERA)
                 .withListener(allPermissionsListener)
-                .check())
+                .withErrorListener(errorListener)::check)
                 .start();
     }
 
@@ -173,9 +170,10 @@ public class LoginActivity extends AppCompatActivity {
                 .create();
     }
 
-    public void showPermissionGranted(String permission) {
-        startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
+    public boolean showPermissionGranted(String permission) {
 
+        //startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
+        return true;
     }
 
     public void showPermissionDenied(String permission, boolean isPermanentlyDenied) {
@@ -262,7 +260,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 afteranimationView.setVisibility(VISIBLE);
-
             }
 
         });
@@ -306,7 +303,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void OpenSignupPage(View view) {
-        requestStoragePermission();
+        String permission = " ";
+        if (showPermissionGranted(permission)) {
+            startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
+        }
     }
 
     @Override
