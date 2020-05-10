@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -70,6 +69,7 @@
         android:layout_below="@id/titleBar"
         android:orientation="vertical">
 
+
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/grid"
             android:layout_width="match_parent"
@@ -121,7 +121,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/evaluate"
+                android:id="@+id/exams"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -134,7 +134,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/evaluation"
+                        android:id="@+id/exam"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_centerVertical="true"
@@ -142,15 +142,15 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:scaleType="fitXY"
-                        app:srcCompat="@drawable/evaluation" />
+                        app:srcCompat="@drawable/exam" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_marginLeft="40dp"
-                        android:layout_toRightOf="@id/evaluation"
-                        android:text="STUDENT EVALUATION"
+                        android:layout_toRightOf="@id/exam"
+                        android:text="EXAMINATION"
                         android:textColor="@color/colorAccent"
                         android:textSize="18sp" />
                 </RelativeLayout>

@@ -8,10 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.kcbbankgroup.tukenyahub.R;
@@ -26,8 +26,10 @@ import java.util.Objects;
 public class DeferFragment extends Fragment {
     private DatePickerDialog datePickerDialog;
     private EditText datePicker;
+    private Button button;
     private Spinner spinner;
-    private  CardView cardView;
+    private EditText cardView;
+
     public DeferFragment() {
         // Required empty public constructor
     }
@@ -36,8 +38,9 @@ public class DeferFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_defer, container, false);
+        View view = inflater.inflate(R.layout.defer_fragment, container, false);
         Thread thread = new Thread(() -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> alertBuilder(view)));
         thread.start();
         initUi(view);
@@ -76,22 +79,24 @@ public class DeferFragment extends Fragment {
     }
 
     private void initUi(View view) {
+        button = view.findViewById(R.id.button2);
         spinner = view.findViewById(R.id.spinner);
         datePicker = view.findViewById(R.id.datePicker);
-        cardView = view.findViewById(R.id.cardview12);
+        cardView = view.findViewById(R.id.quoteTextArea2);
         datePicker.setOnClickListener(v -> {
             datePicker.setShowSoftInputOnFocus(false);
             datePickerDialog.show();
         });
-datePicker.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if(hasFocus){
-            datePicker.setShowSoftInputOnFocus(false);
-            datePickerDialog.show();
-        }
-    }
-});
+
+        datePicker.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    datePicker.setShowSoftInputOnFocus(false);
+                    datePickerDialog.show();
+                }
+            }
+        });
     }
 
 }

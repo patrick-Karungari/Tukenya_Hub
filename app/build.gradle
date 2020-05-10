@@ -1,8 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+
 android {
     compileSdkVersion 29
     buildToolsVersion '29.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.kcbbankgroup.tukenyahub"
         minSdkVersion 23
@@ -17,6 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
@@ -26,6 +32,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.shreyaspatil:MaterialDialog:2.1'
+    implementation 'com.nightlynexus.viewstatepageradapter:viewstatepageradapter:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.airbnb.android:lottie:3.3.1'
     implementation 'org.jsoup:jsoup:1.12.2'
@@ -40,7 +47,16 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     testImplementation 'junit:junit:4.13'
+    implementation 'com.github.abhidiwakar:AnstronCoreHelper:1.1'
+    implementation 'com.iceteck.silicompressorr:silicompressor:2.2.3'
+    implementation 'com.karumi:dexter:6.1.2'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'id.zelory:compressor:3.0.0'
+    implementation 'com.mikhaellopez:circularimageview:4.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
+
 }

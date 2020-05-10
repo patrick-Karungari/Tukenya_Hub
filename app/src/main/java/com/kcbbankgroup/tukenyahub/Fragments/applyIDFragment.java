@@ -21,9 +21,8 @@ public class applyIDFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.apply_id_fragment, container, false);
-
-        return view;
+        container.findViewById(R.id.grid).setVisibility(View.GONE);
+        return inflater.inflate(R.layout.apply_id_fragment, container, false);
     }
 
 }

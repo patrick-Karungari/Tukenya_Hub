@@ -6,7 +6,7 @@ package com.kcbbankgroup.tukenyahub.Modules;
 
 public class Constants {
 
-    private static final String ROOT_URL = "https://5d3bd395.ngrok.io/TukenyaHub/v1/";
+    private static final String ROOT_URL = "https://37ec37ff.ngrok.io/TukenyaHub/v1/";
 
     public static final String URL_REGISTER = ROOT_URL+"registerUser.php";
     public static final String URL_LOGIN = ROOT_URL+"userLogin.php";

@@ -1,14 +1,5 @@
 <resources>
-
     <!-- Base application theme. -->
-
-
-    <!--<style parent="Theme.AppCompat.Light.NoActionBar" name="AppTheme">-->
-
-    <!-- Customize your theme here. -->
-
-
-
     <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <item name="android:windowDisablePreview">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -17,13 +8,18 @@
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
         <item name="material_dialog_background">#FFFFFF</item>
         <item name="material_dialog_title_text_color">#000000</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="material_dialog_message_text_color">#5F5F5F</item>
         <item name="material_dialog_positive_button_color">@color/colorAccent</item>
         <item name="material_dialog_positive_button_text_color">#FFFFFF</item>
         <item name="material_dialog_negative_button_text_color">@color/colorAccent</item>
     </style>
+    <!-- Customize your theme here. -->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+
     </style>
+
     <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
         <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
@@ -36,15 +32,18 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="button" parent="Widget.MaterialComponents.Button">
         <item name="android:background">@color/design_default_color_error</item>
     </style>
-    <style name="MyTheme"  parent="Theme.AppCompat.Light.NoActionBar">
+
+    <style name="MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
     <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -53,12 +52,27 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
     </style>
+
     <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
+
     <style name="ProgressBarStyle">
         <item name="colorAccent">@color/colorProgressBar</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TabLayoutStyle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 </resources>

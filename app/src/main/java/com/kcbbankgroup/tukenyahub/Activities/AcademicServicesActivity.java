@@ -1,6 +1,6 @@
 package com.kcbbankgroup.tukenyahub.Activities;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,20 +15,18 @@ import androidx.fragment.app.FragmentTransaction;
 import com.kcbbankgroup.tukenyahub.Fragments.DeferFragment;
 import com.kcbbankgroup.tukenyahub.Fragments.applyIDFragment;
 import com.kcbbankgroup.tukenyahub.Fragments.graduation_clearance_Fragment;
+import com.kcbbankgroup.tukenyahub.Modules.ScreenRotation;
 import com.kcbbankgroup.tukenyahub.R;
 
-import static android.view.Window.FEATURE_NO_TITLE;
-
 public class AcademicServicesActivity extends AppCompatActivity {
-
+    TextView textView;
     ImageView button;
-    Fragment fragment;
-    FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(FEATURE_NO_TITLE);//will hide the title
+        new ScreenRotation(getApplicationContext(), this);
         setContentView(R.layout.activity_academic_services);
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -37,27 +35,25 @@ public class AcademicServicesActivity extends AppCompatActivity {
 
     }
 
-
-    @SuppressLint("SetJavaScriptEnabled")
     private void initUi() {
-        TextView textView =findViewById(R.id.dataTitle);
+        textView = findViewById(R.id.dataTitle);
         button = findViewById(R.id.homeTo);
         button.setOnClickListener(v -> {
-            fragment = getSupportFragmentManager().findFragmentById(R.id.containerLayout);
-            if(fragment != null) {
-                fragmentManager = getSupportFragmentManager();
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.containerLayout);
+            if (fragment != null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.popBackStack();
                 findViewById(R.id.grid).setVisibility(View.VISIBLE);
                 textView.setText("ACADEMIC SERVICES");
-            }else {
-                AcademicServicesActivity.this.onBackPressed();
+            } else {
+                startActivity(new Intent(this, MainActivity.class));
             }
 
         });
         findViewById(R.id.applyID).setOnClickListener(v -> {
             textView.setTextSize(24);
             textView.setText("APPLY / RENEW STUDENT ID");
-            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.containerLayout, new applyIDFragment());
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
@@ -81,8 +77,12 @@ public class AcademicServicesActivity extends AppCompatActivity {
             fragmentTransaction.commit();
             findViewById(R.id.grid).setVisibility(View.GONE);
         });
+        findViewById(R.id.exams).setOnClickListener(v -> startActivity(new Intent(AcademicServicesActivity.this, ExaminationsActivity.class)));
     }
 
-
+    @Override
+    public void onBackPressed() {
+        button.performClick();
+    }
 }
 

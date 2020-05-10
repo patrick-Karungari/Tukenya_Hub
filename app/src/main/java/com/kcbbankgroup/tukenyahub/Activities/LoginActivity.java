@@ -1,14 +1,17 @@
 package com.kcbbankgroup.tukenyahub.Activities;
 
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -16,8 +19,11 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -31,19 +37,27 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.kcbbankgroup.tukenyahub.Modules.Constants;
-import com.kcbbankgroup.tukenyahub.R;
+import com.kcbbankgroup.tukenyahub.Modules.Permission.SampleErrorListener;
+import com.kcbbankgroup.tukenyahub.Modules.Permission.SampleMultiplePermissionListener;
 import com.kcbbankgroup.tukenyahub.Modules.RequestHandler;
+import com.kcbbankgroup.tukenyahub.Modules.ScreenRotation;
 import com.kcbbankgroup.tukenyahub.Modules.SharedPrefManager;
+import com.kcbbankgroup.tukenyahub.R;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 
 import org.json.JSONException;
@@ -52,28 +66,40 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.os.Build.VERSION.SDK_INT;
 import static android.view.View.VISIBLE;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int MY_SOCKET_TIMEOUT_MS = 15000;
+    public static final int REQUEST_CODE = 1;
+    String requiredValue;
     EditText uniNum;
     EditText password;
-    String userEmail, userPassword;
+    String userReg, userPassword;
     RelativeLayout rootView;
     JSONObject obj;
-    Button btnLogin;
+    CardView btnLogin;
     RelativeLayout afteranimationView;
     Context mContext;
-    LinearLayout progressBarHolder;
+    LinearLayout linear_layout;
     boolean isConnected;
     ImageView bookIconImageView;
     ProgressDialog progressDialog;
-    TextView bookITextView, signUp, welcomeback;
+    TextView motto, signUp, welcomeback;
     ProgressBar loadingProgressBar;
     AlertDialog.Builder builder;
-    AlertDialog alert;
+    AlertDialog alert, dialog;
     MaterialDialog mDialog, mDialog3, mDialog2;
+
+
+    private MultiplePermissionsListener allPermissionsListener;
+    private PermissionRequestErrorListener errorListener;
+    @BindView(android.R.id.content)
+    View contentView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,14 +109,77 @@ public class LoginActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        new ScreenRotation(getApplicationContext(), this);
         setContentView(R.layout.activity_login);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
+        ButterKnife.bind(this);
+        createPermissionListeners();
+
+        //  startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        //finish();
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
+    }
+
+    private void requestStoragePermission() {
+        new Thread(() -> Dexter.withContext(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA)
+                .withListener(allPermissionsListener)
+                .check())
+                .start();
+    }
+
+    private void createPermissionListeners() {
+        MultiplePermissionsListener feedbackViewMultiplePermissionListener =
+                new SampleMultiplePermissionListener(this);
+
+        allPermissionsListener =
+                new CompositeMultiplePermissionsListener(feedbackViewMultiplePermissionListener);
+        errorListener = new SampleErrorListener();
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public void showPermissionRationale(final PermissionToken token) {
+        dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
+                .setMessage(R.string.permission_rationale_message)
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        token.cancelPermissionRequest();
+                    }
+                })
+                .setPositiveButton(R.string.permission_rationale_settings_button_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivityForResult(intent, 101);
+                        token.continuePermissionRequest();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        token.cancelPermissionRequest();
+                    }
+                })
+                .create();
+    }
+
+    public void showPermissionGranted(String permission) {
+        startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
+
+    }
+
+    public void showPermissionDenied(String permission, boolean isPermanentlyDenied) {
+        dialog.show();
     }
 
     @Override
@@ -100,9 +189,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!(hasFocus)) {
             return;
         }
-
         initializeUI();
-
 
     }
 
@@ -110,23 +197,28 @@ public class LoginActivity extends AppCompatActivity {
         Thread thread = new Thread(() -> {
             LoginActivity.this.runOnUiThread(() -> {
                 alertBuilder();
-                preLogin();
+                if (requiredValue == null) {
+                    preLogin();
+                    requiredValue = null;
+                }
             });
             isNetworkConnected();
+
         });
         thread.start();
 
+        linear_layout = findViewById(R.id.linear_layout);
+        welcomeback = findViewById(R.id.WelcomeTextView);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        uniNum = findViewById(R.id.uniNum);
-        bookITextView = findViewById(R.id.bookITextView);
+        uniNum = findViewById(R.id.username);
+        motto = findViewById(R.id.motto);
         password = findViewById(R.id.password);
         afteranimationView = findViewById(R.id.afterAnimationView);
         rootView = findViewById(R.id.rootView);
         bookIconImageView = findViewById(R.id.bookIconImageView);
-        btnLogin = findViewById(R.id.loginButton);
+        btnLogin = findViewById(R.id.cardView);
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
-        signUp = findViewById(R.id.signUpFragment);
+        signUp = findViewById(R.id.register_here);
         btnLogin.setOnClickListener(view -> LoginActivity.this.OpenMainActivity());
         signUp.setOnClickListener(this::OpenSignupPage);
         progressDialog = new ProgressDialog(LoginActivity.this,
@@ -140,25 +232,26 @@ public class LoginActivity extends AppCompatActivity {
     private void preLogin() {
         new CountDownTimer(5000, 1000) {
 
+
             public void onTick(long millisUntilFinished) {
+                welcomeback.setVisibility(View.GONE);
+
             }
 
             public void onFinish() {
-                bookITextView.setVisibility(View.GONE);
                 loadingProgressBar.setVisibility(View.GONE);
-
-                startAnimation(bookIconImageView);
+                startAnimation(linear_layout);
             }
         }.start();
 
     }
 
     private void startAnimation(View bookIconImageView) {
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(bookIconImageView, "y", 100f);
-        ObjectAnimator animatorX = ObjectAnimator.ofFloat(bookIconImageView, "x", 50f);
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(bookIconImageView, "y", 150f);
+
         animatorY.setDuration(1000);
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animatorY, animatorX);
+        animatorSet.playTogether(animatorY);
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationCancel(Animator animation) {
@@ -169,9 +262,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 afteranimationView.setVisibility(VISIBLE);
-                rootView.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorSplashText));
-                bookITextView = findViewById(R.id.unilogo);
-                welcomeback = findViewById(R.id.WelcomeTextView);
 
             }
 
@@ -216,7 +306,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void OpenSignupPage(View view) {
-        startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+        requestStoragePermission();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+
+                requiredValue = data.getStringExtra("key");
+                userReg = data.getStringExtra("regNum");
+                userPassword = data.getStringExtra("password");
+                uniNum.setText(userReg);
+                password.setText(userPassword);
+            }
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(), ex.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -225,10 +334,10 @@ public class LoginActivity extends AppCompatActivity {
 
             boolean STATE = isNetworkConnected();
             if (STATE) {
-                userEmail = uniNum.getText().toString();
+                userReg = uniNum.getText().toString();
                 userPassword = password.getText().toString();
                 //login user
-                if (TextUtils.isEmpty(userEmail)) {
+                if (TextUtils.isEmpty(userReg)) {
                     Toast.makeText(getApplicationContext(), "Enter registration number!", Toast.LENGTH_SHORT).show();
                     uniNum.setError("Registration Number Required.");
                     uniNum.setText("");
@@ -247,7 +356,9 @@ public class LoginActivity extends AppCompatActivity {
                     uniNum.requestFocus();
                     return;
                 }
-                userLogin();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+                //userLogin();
 
             } else {
 

@@ -21,8 +21,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.kcbbankgroup.tukenyahub.R;
+import com.kcbbankgroup.tukenyahub.Modules.ScreenRotation;
 import com.kcbbankgroup.tukenyahub.Modules.SharedPrefManager;
+import com.kcbbankgroup.tukenyahub.R;
 
 import java.util.Objects;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        new ScreenRotation(getApplicationContext(), this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -71,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                ImageData = SharedPrefManager.getInstance(MainActivity.this.getApplicationContext()).getimageData();
+                //  ImageData = SharedPrefManager.getInstance(MainActivity.this.getApplicationContext()).getimageData();
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         MainActivity.this.alertBuilder();
-                        imageView.setImageBitmap(MainActivity.this.decodeImage(ImageData));
+                        // imageView.setImageBitmap(MainActivity.this.decodeImage(ImageData));
                     }
                 });
             }
