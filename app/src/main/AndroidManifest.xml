@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.kcbbankgroup.tukenyahub">
+    package="com.patrickarungari.tukenyahub">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,23 +20,23 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".Activities.ExaminationsActivity"
+            android:name="com.patrickarungari.tukenyahub.Activities.ExaminationsActivity"
             android:label="@string/title_activity_examinations"
-            android:parentActivityName=".Activities.AcademicServicesActivity"
+            android:parentActivityName="com.patrickarungari.tukenyahub.Activities.AcademicServicesActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kcbbankgroup.tukenyahub.Activities.AcademicServicesActivity" />
+                android:value="com.patrickarungari.tukenyahub.Activities.AcademicServicesActivity" />
         </activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.SignupActivity" />
+        <activity android:name="com.patrickarungari.tukenyahub.Activities.MainActivity" />
+        <activity android:name="com.patrickarungari.tukenyahub.Activities.SignupActivity" />
         <activity
-            android:name=".Activities.LoginActivity"
+            android:name="com.patrickarungari.tukenyahub.Activities.LoginActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,7 +46,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.AcademicServicesActivity"
+            android:name="com.patrickarungari.tukenyahub.Activities.AcademicServicesActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
