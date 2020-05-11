@@ -37,7 +37,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -114,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         createPermissionListeners();
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivityForResult(new Intent(this, MainActivity.class), REQUEST_CODE);
             finish();
         }
     }
@@ -141,33 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void showPermissionRationale(final PermissionToken token) {
-        dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
-                .setMessage(R.string.permission_rationale_message)
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        token.cancelPermissionRequest();
-                    }
-                })
-                .setPositiveButton(R.string.permission_rationale_settings_button_text, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, 101);
-                        token.continuePermissionRequest();
-                    }
-                })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        token.cancelPermissionRequest();
-                    }
-                })
-                .create();
+        dialog.show();
     }
 
     public boolean showPermissionGranted(String permission) {
@@ -176,8 +149,9 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    public void showPermissionDenied(String permission, boolean isPermanentlyDenied) {
-        dialog.show();
+    public boolean showPermissionDenied(String permission, boolean isPermanentlyDenied) {
+        //dialog.show();
+        return true;
     }
 
     @Override
@@ -239,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFinish() {
                 loadingProgressBar.setVisibility(View.GONE);
                 startAnimation(linear_layout);
+
             }
         }.start();
 
@@ -304,14 +279,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void OpenSignupPage(View view) {
+        requestStoragePermission();
         String permission = " ";
         if (showPermissionGranted(permission)) {
             startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
+        } else {
+            if (showPermissionDenied(permission, true)) {
+                dialog.show();
+            }
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
             super.onActivityResult(requestCode, resultCode, data);
 
@@ -322,6 +302,9 @@ public class LoginActivity extends AppCompatActivity {
                 userPassword = data.getStringExtra("password");
                 uniNum.setText(userReg);
                 password.setText(userPassword);
+            }
+            if (requestCode == REQUEST_CODE && resultCode == 200) {
+                requiredValue = data.getStringExtra("key");
             }
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(), ex.toString(),
@@ -357,9 +340,9 @@ public class LoginActivity extends AppCompatActivity {
                     uniNum.requestFocus();
                     return;
                 }
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-                //userLogin();
+
+
+                userLogin();
 
             } else {
 
@@ -390,6 +373,7 @@ public class LoginActivity extends AppCompatActivity {
                         obj = new JSONObject(response);
 
                         if (!obj.getBoolean("error")) {
+
                             SharedPrefManager.getInstance(getApplicationContext())
                                     .userLogin(
                                             obj.getInt("id"),
@@ -398,8 +382,7 @@ public class LoginActivity extends AppCompatActivity {
                                             obj.getString("uniNum"),
                                             obj.getString("imageData")
                                     );
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                            startActivityForResult(new Intent(LoginActivity.this, MainActivity.class), REQUEST_CODE);
                         } else {
                             String code = obj.getString("code");
                             switch (code) {
@@ -467,6 +450,31 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void alertBuilder() {
+
+        dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
+                .setMessage(R.string.permission_rationale_message)
+                .setPositiveButton(R.string.permission_rationale_settings_button_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivityForResult(intent, 101);
+                        //token.continuePermissionRequest();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        //token.cancelPermissionRequest();
+                    }
+                })
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+
+
         android.content.DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
             switch (which) {
                 case android.content.DialogInterface.BUTTON_POSITIVE:

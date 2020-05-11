@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -28,9 +27,6 @@ public class AcademicServicesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         new ScreenRotation(getApplicationContext(), this);
         setContentView(R.layout.activity_academic_services);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
         initUi();
 
     }

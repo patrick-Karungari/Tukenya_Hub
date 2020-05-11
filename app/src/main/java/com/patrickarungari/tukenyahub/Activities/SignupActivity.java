@@ -62,7 +62,6 @@ import butterknife.ButterKnife;
 import static android.os.Build.VERSION.SDK_INT;
 
 public class SignupActivity extends AppCompatActivity {
-    private static final String TAG = "SignupActivity: ";
     EditText password, regNum, name, email;
     TextView button, greetings, signUp_title;
     private RelativeLayout frame;
@@ -72,6 +71,8 @@ public class SignupActivity extends AppCompatActivity {
     private TextView[] dots;
     private int[] layouts;
     private CardView btnNext;
+    JSONObject jsonObject;
+    String code = "null";
     AlertDialog.Builder builder;
     AlertDialog alert;
     private String keyPass, keyReg;
@@ -84,7 +85,6 @@ public class SignupActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private MaterialDialog mDialog2;
     private MaterialDialog mDialog;
-    String code;
 
 
     @Override
@@ -254,6 +254,10 @@ public class SignupActivity extends AppCompatActivity {
                 password.requestFocus();
             }
         }
+        if (bitmap == null) {
+            Toast.makeText(Objects.requireNonNull(this).getApplicationContext(), "Please select Image", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+        }
         return result;
     }
 
@@ -269,9 +273,7 @@ public class SignupActivity extends AppCompatActivity {
         if (validateForm()) {
             registerUser();
         }
-
     }
-
     private void registerUser() {
         progressDialog.show();
         final String uEmail = email.getText().toString().trim();
@@ -279,89 +281,154 @@ public class SignupActivity extends AppCompatActivity {
         final String Upassword = password.getText().toString().trim();
         final String uniNumber = regNum.getText().toString().trim();
         final String imageStr;
-        if (bitmap == null) {
-            Toast.makeText(Objects.requireNonNull(this).getApplicationContext(), "Please select Image", Toast.LENGTH_LONG).show();
+        if (!isNetworkConnected()) {
+            mDialog2.show();
             progressDialog.dismiss();
+            code = "null";
         } else {
-            if (!isNetworkConnected()) {
-                mDialog2.show();
-                progressDialog.dismiss();
-            } else {
-                imageStr = getStringImage(bitmap);
-                StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                        Constants.URL_REGISTER,
-                        (String response) -> {
-                            try {
-                                progressDialog.dismiss();
-                                JSONObject jsonObject = new JSONObject(response);
-                                code = jsonObject.getString("code");
-                                switch (code) {
-                                    case "0":
-                                        Toast.makeText(this, jsonObject.getString("message"), Toast.LENGTH_LONG).show();
-                                        keyPass = password.getText().toString();
-                                        keyReg = regNum.getText().toString();
-                                        Intent intent = getIntent();
-                                        String value = "OK";
-                                        intent.putExtra("key", value);
-                                        intent.putExtra("regNum", keyReg);
-                                        intent.putExtra("password", keyPass);
-                                        setResult(RESULT_OK, intent);
-                                        finish();
-                                        break;
-                                    case "2":
-                                        Toast.makeText(this, jsonObject.getString("message"), Toast.LENGTH_LONG).show();
-                                        email.setError("Email in use by another user.");
-                                        regNum.setText("");
-                                        regNum.setError("Registration number in use by another user.");
-                                        email.setText("");
-                                        email.requestFocus();
-                                    case "1":
-                                        MaterialDialog mDialog3 = new MaterialDialog.Builder(this)
-                                                .setMessage(jsonObject.getString("message"))
-                                                .setTitle("ERROR")
-                                                .setCancelable(true)
-                                                .setAnimation("Timeout.json")
-                                                .setPositiveButton("OK", (dialogInterface, which) -> dialogInterface.dismiss())
-                                                .build();
-                                        mDialog3.show();
-                                        break;
-
-
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Log.i("Server Error", "[" + response + "]");
+            imageStr = getStringImage(bitmap);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                    Constants.URL_REGISTER,
+                    response -> {
+                        try {
+                            jsonObject = new JSONObject(response);
+                            code = jsonObject.getString("code");
+                            progressDialog.dismiss();
+                            switch (code) {
+                                case "0":
+                                    Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                                    keyPass = password.getText().toString();
+                                    keyReg = regNum.getText().toString();
+                                    Intent intent = getIntent();
+                                    String value = "OK";
+                                    intent.putExtra("key", value);
+                                    intent.putExtra("regNum", keyReg);
+                                    intent.putExtra("password", keyPass);
+                                    setResult(RESULT_OK, intent);
+                                    finish();
+                                    break;
+                                case "2":
+                                    Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                                    email.setError("Email in use by another user.");
+                                    regNum.setText("");
+                                    regNum.setError("Registration number in use by another user.");
+                                    email.setText("");
+                                    email.requestFocus();
+                                    break;
+                                case "1":
+                                    MaterialDialog mDialog3 = new MaterialDialog.Builder(this)
+                                            .setMessage(jsonObject.getString("message"))
+                                            .setTitle("ERROR")
+                                            .setCancelable(true)
+                                            .setAnimation("Timeout.json")
+                                            .setPositiveButton("OK", (dialogInterface, which) -> dialogInterface.dismiss())
+                                            .build();
+                                    mDialog3.show();
+                                    break;
                             }
-                        },
-                        (VolleyError error) -> {
-                            progressDialog.hide();
+                        } catch (JSONException e) {
+                            progressDialog.dismiss();
+                            e.printStackTrace();
+                            Log.i("Server Error", "[" + response + "]");
+                        }
+                    },
+                    (VolleyError error) -> {
+                        progressDialog.dismiss();
+                        if (!code.equals("1")) {
                             mDialog.show();
-                            Log.i("Server Error", "[" + error + "]");
+                        }
 
-                        }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-
-                        Map<String, String> params = new HashMap<>();
-                        params.put("username", uName);
-                        params.put("email", uEmail);
-                        params.put("password", Upassword);
-                        params.put("uniNum", uniNumber);
-                        params.put("image", imageStr);
-
-                        return params;
-                    }
-                };
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                        MY_SOCKET_TIMEOUT_MS,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
-            }
-
+                        Log.i("Server Error", "[" + error + "]");
+                    }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("username", uName);
+                    params.put("email", uEmail);
+                    params.put("password", Upassword);
+                    params.put("uniNum", uniNumber);
+                    params.put("image", imageStr);
+                    return params;
+                }
+            };
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    MY_SOCKET_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
         }
     }
+   /* private  class networkRequest extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.show();
+        }
+
+        SignupActivity activity;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            registerUser();
+            return  null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            try {
+                if (!code.equals("null")){
+                    switch (code) {
+                        case "0":
+                            Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                            keyPass = password.getText().toString();
+                            keyReg = regNum.getText().toString();
+                            Intent intent = getIntent();
+                            String value = "OK";
+                            intent.putExtra("key", value);
+                            intent.putExtra("regNum", keyReg);
+                            intent.putExtra("password", keyPass);
+                            setResult(RESULT_OK, intent);
+                            finish();
+                            break;
+                        case "2":
+                            Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
+                            email.setError("Email in use by another user.");
+                            regNum.setText("");
+                            regNum.setError("Registration number in use by another user.");
+                            email.setText("");
+                            email.requestFocus();
+                        case "1":
+                            MaterialDialog mDialog3 = new MaterialDialog.Builder(activity)
+                                    .setMessage(jsonObject.getString("message"))
+                                    .setTitle("ERROR")
+                                    .setCancelable(true)
+                                    .setAnimation("Timeout.json")
+                                    .setPositiveButton("OK", (dialogInterface, which) -> dialogInterface.dismiss())
+                                    .build();
+                            mDialog3.show();
+                            break;
+                    }
+                }
+                else {
+                    MaterialDialog mDialog3 = new MaterialDialog.Builder(activity)
+                            .setMessage(jsonObject.getString("message"))
+                            .setTitle("ERROR")
+                            .setCancelable(true)
+                            .setAnimation("Timeout.json")
+                            .setPositiveButton("OK", (dialogInterface, which) -> dialogInterface.dismiss())
+                            .build();
+                    mDialog3.show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.i("Server Error", "[" + Volresponse + "]");
+            }
+        }
+    } */
 
     private boolean isNetworkConnected() {
 
@@ -414,7 +481,7 @@ public class SignupActivity extends AppCompatActivity {
                     break;
             }
         };
-        builder = new AlertDialog.Builder(SignupActivity.this);
+        builder = new AlertDialog.Builder(this);
         builder.setTitle("EXIT")
                 .setMessage("Are you sure you want to exit?")
                 .setPositiveButton("Yes", dialogClickListener)
@@ -471,9 +538,9 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void showFileChooser() {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {"Choose from Gallery", "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose your profile picture");
 
         builder.setItems(options, new DialogInterface.OnClickListener() {

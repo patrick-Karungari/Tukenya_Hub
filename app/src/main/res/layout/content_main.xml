@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorSplashText">
+    android:background="@drawable/gradient">
 
     <View
         android:id="@+id/bg_top_header"
@@ -26,13 +26,16 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/userCard"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="110dp"
+            android:layout_height="0dp"
             android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="8dp"
             android:padding="4dp"
-            app:contentPadding="4dp"
+            app:cardBackgroundColor="@color/cardColor"
+            app:cardElevation="30dp"
+            app:cardMaxElevation="10dp"
+            app:contentPadding="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -86,18 +89,18 @@
 
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="114dp"
-        android:layout_marginBottom="2dp"
-        android:padding="14dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         android:visibility="visible"
         app:columnCount="2"
         app:columnOrderPreserved="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/bg_top_header"
+        app:layout_constraintTop_toBottomOf="@id/coordinatorLayout"
         app:layout_editor_absoluteX="0dp"
         app:rowCount="3">
 

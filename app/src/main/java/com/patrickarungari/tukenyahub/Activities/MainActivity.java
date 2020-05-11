@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -25,16 +23,12 @@ import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.Modules.SharedPrefManager;
 import com.patrickarungari.tukenyahub.R;
 
-import java.util.Objects;
-
 public class MainActivity extends AppCompatActivity {
     TextView username, regNo;
     ImageView imageView;
     CardView academicServ,logout;
     AlertDialog.Builder builder;
-    //Button logout;
     AlertDialog alert;
-    String ImageData;
 
 
     @Override
@@ -47,22 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // land
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // port
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-    }
-
     private void initUi() {
-        ActionBar actionBar = getSupportActionBar();
-        Objects.requireNonNull(actionBar).hide();
         username = findViewById(R.id.user_name);
         logout = findViewById(R.id.logout);
         regNo = findViewById(R.id.user_id);
@@ -70,24 +49,25 @@ public class MainActivity extends AppCompatActivity {
         academicServ = findViewById(R.id.profile);
         regNo.setText(SharedPrefManager.getInstance(getApplicationContext()).getuniNum());
         username.setText(SharedPrefManager.getInstance(getApplicationContext()).getUsername());
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //  ImageData = SharedPrefManager.getInstance(MainActivity.this.getApplicationContext()).getimageData();
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MainActivity.this.alertBuilder();
-                        // imageView.setImageBitmap(MainActivity.this.decodeImage(ImageData));
-                    }
-                });
-            }
+        Thread thread = new Thread(() -> {
+            //  ImageData = SharedPrefManager.getInstance(MainActivity.this.getApplicationContext()).getimageData();
+            MainActivity.this.runOnUiThread(() -> {
+                MainActivity.this.alertBuilder();
+                imageView.setImageBitmap(decodeImage(SharedPrefManager.getInstance(getApplicationContext()).getimageData()));
+                // imageView.setImageBitmap(MainActivity.this.decodeImage(ImageData));
+            });
         });
         thread.start();
         academicServ.setOnClickListener(view -> MainActivity.this.quickLinks());
         logout.setOnClickListener(v -> {
+
             SharedPrefManager.getInstance(getApplicationContext()).logout();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            String value = "OK";
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.putExtra("key", value);
+            setResult(200, intent);
+            finish();
+
         });
     }
 
@@ -100,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AcademicServicesActivity.class);
         startActivity(intent);
     }
-
 
     @Override
     public void onBackPressed() {

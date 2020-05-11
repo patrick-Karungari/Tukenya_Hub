@@ -18,6 +18,7 @@ public class SharedPrefManager {
     private static final String KEY_USER_EMAIL = "useremail";
     private static final String KEY_USER_ID = "userid";
     private static final String KEY_REGNUM = "uniNum";
+    private static final String key_loginBefore = "loginBefore";
 
     private SharedPrefManager(Context context) {
         mCtx = context;
@@ -31,7 +32,7 @@ public class SharedPrefManager {
         return mInstance;
     }
 
-    public boolean userLogin(int id, String username, String email, String uniNum, String imageString){
+    public boolean userLogin(int id, String username, String email, String uniNum, String imageString) {
 
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -41,40 +42,46 @@ public class SharedPrefManager {
         editor.putString(KEY_USERNAME, username);
         editor.putString(KEY_REGNUM, uniNum);
         editor.putString(KEY_IMAGE_STRING, imageString);
-
         editor.apply();
 
         return true;
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USERNAME, null) != null;
     }
 
-    public boolean logout(){
+    public boolean logout() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
-        return true; 
+        return true;
     }
 
 
-    public String getUsername(){
+    public String getUsername() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USERNAME, null);
     }
-    public String getuniNum(){
+
+    public String getuniNum() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_REGNUM, null);
     }
-    public String getimageData(){
+
+    public Boolean loginBefore() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key_loginBefore, null).equals("true");
+    }
+
+    public String getimageData() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_IMAGE_STRING, null);
     }
 
-    public String getUserEmail(){
+    public String getUserEmail() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USER_EMAIL, null);
     }
