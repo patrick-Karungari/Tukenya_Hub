@@ -7,7 +7,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,7 +19,6 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -45,18 +43,12 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.patrickarungari.tukenyahub.Modules.Constants;
-import com.patrickarungari.tukenyahub.Modules.Permission.SampleErrorListener;
-import com.patrickarungari.tukenyahub.Modules.Permission.SampleMultiplePermissionListener;
 import com.patrickarungari.tukenyahub.Modules.RequestHandler;
 import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.Modules.SharedPrefManager;
 import com.patrickarungari.tukenyahub.R;
+import com.pushlink.android.PushLink;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 
 import org.json.JSONException;
@@ -67,10 +59,17 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.view.View.VISIBLE;
 
+@RuntimePermissions
 public class LoginActivity extends AppCompatActivity {
     private static final int MY_SOCKET_TIMEOUT_MS = 15000;
     public static final int REQUEST_CODE = 1;
@@ -92,10 +91,6 @@ public class LoginActivity extends AppCompatActivity {
     AlertDialog.Builder builder;
     AlertDialog alert, dialog;
     MaterialDialog mDialog, mDialog3, mDialog2;
-
-
-    private MultiplePermissionsListener allPermissionsListener;
-    private PermissionRequestErrorListener errorListener;
     @BindView(android.R.id.content)
     View contentView;
 
@@ -111,47 +106,10 @@ public class LoginActivity extends AppCompatActivity {
         new ScreenRotation(getApplicationContext(), this);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        createPermissionListeners();
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             startActivityForResult(new Intent(this, MainActivity.class), REQUEST_CODE);
             finish();
         }
-    }
-
-    private void requestStoragePermission() {
-        new Thread(Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA)
-                .withListener(allPermissionsListener)
-                .withErrorListener(errorListener)::check)
-                .start();
-    }
-
-    private void createPermissionListeners() {
-        MultiplePermissionsListener feedbackViewMultiplePermissionListener =
-                new SampleMultiplePermissionListener(this);
-
-        allPermissionsListener =
-                new CompositeMultiplePermissionsListener(feedbackViewMultiplePermissionListener);
-        errorListener = new SampleErrorListener();
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public void showPermissionRationale(final PermissionToken token) {
-        dialog.show();
-    }
-
-    public boolean showPermissionGranted(String permission) {
-
-        //startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
-        return true;
-    }
-
-    public boolean showPermissionDenied(String permission, boolean isPermanentlyDenied) {
-        //dialog.show();
-        return true;
     }
 
     @Override
@@ -166,22 +124,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        Thread thread = new Thread(() -> {
-            LoginActivity.this.runOnUiThread(() -> {
-                alertBuilder();
-                if (requiredValue == null) {
-                    preLogin();
-                    requiredValue = null;
-                }
-            });
-            isNetworkConnected();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+                LoginActivity.this.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        LoginActivity.this.alertBuilder();
+                        if (requiredValue == null) {
+                            LoginActivity.this.preLogin();
+                            requiredValue = null;
+                        }
+
+                    }
+                });
+                LoginActivity.this.isNetworkConnected();
+
+            }
         });
         thread.start();
-
         linear_layout = findViewById(R.id.linear_layout);
         welcomeback = findViewById(R.id.WelcomeTextView);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         uniNum = findViewById(R.id.username);
         motto = findViewById(R.id.motto);
         password = findViewById(R.id.password);
@@ -191,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.cardView);
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
         signUp = findViewById(R.id.register_here);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         btnLogin.setOnClickListener(view -> LoginActivity.this.OpenMainActivity());
         signUp.setOnClickListener(this::OpenSignupPage);
         progressDialog = new ProgressDialog(LoginActivity.this,
@@ -199,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Authenticating...");
+
     }
 
     private void preLogin() {
@@ -220,6 +188,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startAnimation(View bookIconImageView) {
+
         ObjectAnimator animatorY = ObjectAnimator.ofFloat(bookIconImageView, "y", 150f);
 
         animatorY.setDuration(1000);
@@ -235,13 +204,20 @@ public class LoginActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 afteranimationView.setVisibility(VISIBLE);
-                requestStoragePermission();
+                getPermission();
             }
 
         });
         animatorSet.start();
+
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PushLink.setCurrentActivity(this);
+    }
 
     public void fyl(Context mContext) {
         this.mContext = mContext;
@@ -279,15 +255,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void OpenSignupPage(View view) {
-        requestStoragePermission();
-        String permission = " ";
-        if (showPermissionGranted(permission)) {
-            startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
-        } else {
-            if (showPermissionDenied(permission, true)) {
-                dialog.show();
-            }
-        }
+        startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
     }
 
     @Override
@@ -340,10 +308,7 @@ public class LoginActivity extends AppCompatActivity {
                     uniNum.requestFocus();
                     return;
                 }
-
-
                 userLogin();
-
             } else {
 
                 mDialog2.show();
@@ -423,8 +388,6 @@ public class LoginActivity extends AppCompatActivity {
                 (VolleyError error) -> {
                     mDialog.show();
                     progressDialog.dismiss();
-
-
                 }
         ) {
             @Override
@@ -450,31 +413,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void alertBuilder() {
-
-        dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
-                .setMessage(R.string.permission_rationale_message)
-                .setPositiveButton(R.string.permission_rationale_settings_button_text, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, 101);
-                        //token.continuePermissionRequest();
-                    }
-                })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        //token.cancelPermissionRequest();
-                    }
-                })
-                .create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-
-
         android.content.DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
             switch (which) {
                 case android.content.DialogInterface.BUTTON_POSITIVE:
@@ -526,7 +464,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         alert.create();
         mDialog = new MaterialDialog.Builder(LoginActivity.this)
-                .setMessage("Some error occurred please try again later.")
+                .setMessage("We probably haven't paid for Wi-Fi. We'll be back in a few.\nPlease try again later.")
                 .setTitle("Server Error")
                 .setCancelable(true)
                 .setAnimation("Timeout.json")
@@ -540,6 +478,119 @@ public class LoginActivity extends AppCompatActivity {
                 .setPositiveButton("OK", (dialogInterface, which) -> dialogInterface.dismiss())
                 .build();
     }
+
+    void getPermission() {
+        LoginActivityPermissionsDispatcher.needsPermissionWithPermissionCheck(this);
+        //needsPermission();
+    }
+
+    @NeedsPermission({Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void needsPermission() {
+
+    }
+
+
+    @OnShowRationale({Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onShowRationale(final PermissionRequest request) {
+        permissionsRationale(request);
+    }
+
+    @OnPermissionDenied({Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onPermissionDenied() {
+        //permissionsDenied();
+    }
+
+    @OnNeverAskAgain({Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onNeverAskAgain() {
+        permissionsDenied();
+
+    }
+
+
+    public void permissionsRationale(final PermissionRequest request) {
+        dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
+                .setMessage(R.string.all_permissions_denied_feedback)
+                .setPositiveButton(R.string.permission_rationale_settings_button_text, (dialog, which) -> {
+                    dialog.dismiss();
+                    request.proceed();
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, 101);
+                    //token.continuePermissionRequest();
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        //token.cancelPermissionRequest();
+                    }
+                })
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
+    public void permissionsDenied() {
+        dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
+                .setMessage(R.string.permission_rationale_message)
+                .setPositiveButton(R.string.permission_rationale_settings_button_text, (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, 101);
+                    //token.continuePermissionRequest();
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        //token.cancelPermissionRequest();
+                    }
+                })
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+    }
+/*
+    public void getPermission() {
+        LoginActivityPermissionsDispatcher.needsPermissionWithPermissionCheck(this);
+    }
+
+    @NeedsPermission({Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void needsPermission() {
+        Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show();
+        //permissionsRationales();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        LoginActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @OnShowRationale({Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onShowRationale(final PermissionRequest request) {
+
+        Toast.makeText(this, "Showing rationale", Toast.LENGTH_SHORT).show();
+        permissionsRationale(request);
+    }
+
+    @OnPermissionDenied({Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onPermissionDenied() {
+        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        //permissionsRationales();
+    }
+
+    @OnNeverAskAgain({Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onNeverAskAgain() {
+
+        Toast.makeText(this, "Permission denied twice", Toast.LENGTH_SHORT).show();
+        //permissionsRationales();
+    }
+
+    */
 
 
 }

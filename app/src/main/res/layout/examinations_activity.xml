@@ -1,8 +1,9 @@
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:backgroundTint="#005253"
     app:layoutDescription="@xml/scene_09">
 
     <include
@@ -18,12 +19,11 @@
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimary"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:tabBackground="@drawable/tab_background"
         app:tabIndicatorColor="@color/colorSplashText"
         app:tabMode="fixed"
         app:tabSelectedTextColor="@color/cardColor"

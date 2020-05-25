@@ -1,6 +1,7 @@
 package com.patrickarungari.tukenyahub.Activities;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -13,18 +14,30 @@ import com.patrickarungari.tukenyahub.Fragments.ResultslFragment;
 import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.R;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ExaminationsActivity extends AppCompatActivity {
     private static final int[] TAB_TITLES = new int[]{R.string.tab_provResults, R.string.tab_regExam, R.string.tab_examResults};
+    public static ArrayList<View> rootView = new ArrayList<View>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new ScreenRotation(getApplicationContext(), this);
         setContentView(R.layout.examinations_activity);
-
         setupViewpager();
+        initUi();
+    }
+
+    private void initUi() {
+        rootView.add(findViewById(R.id.homeTo2));
+        findViewById(R.id.homeTo2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     private void setupViewpager() {
@@ -38,5 +51,6 @@ public class ExaminationsActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         Objects.requireNonNull(tabs.getTabAt(1)).select();
+
     }
 }

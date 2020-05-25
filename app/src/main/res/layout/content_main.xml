@@ -7,7 +7,6 @@
     android:background="@drawable/gradient">
 
     <View
-        android:id="@+id/bg_top_header"
         android:layout_width="match_parent"
         android:layout_height="230dp"
         android:background="@drawable/ic_bg_topheader"
@@ -40,6 +39,9 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/my_selector"
                 android:id="@+id/user_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -105,6 +107,7 @@
         app:rowCount="3">
 
         <androidx.cardview.widget.CardView
+            android:foreground="?android:attr/selectableItemBackground"
             android:id="@+id/profile"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -112,6 +115,8 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/cardColor"
+            android:clickable="true"
+            android:focusable="true"
             app:cardCornerRadius="8dp"
             app:cardElevation="30dp"
             app:layout_columnWeight="1"
@@ -125,7 +130,6 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/academicServices"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_centerHorizontal="true"
@@ -158,6 +162,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/cardColor"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="8dp"
             app:cardElevation="30dp"
             app:layout_columnWeight="1"
@@ -200,12 +205,14 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/exam_results"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/cardColor"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="8dp"
             app:cardElevation="30dp"
             app:layout_columnWeight="1"
@@ -246,6 +253,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/cardColor"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="8dp"
             app:cardElevation="30dp"
             app:layout_columnWeight="1"
@@ -285,6 +293,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="4dp"
             android:background="@color/cardColor"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="8dp"
             app:cardElevation="30dp"
             app:layout_columnWeight="1"
@@ -325,6 +334,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="4dp"
             android:background="@color/cardColor"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="8dp"
             app:cardElevation="30dp"
             app:layout_columnWeight="1"

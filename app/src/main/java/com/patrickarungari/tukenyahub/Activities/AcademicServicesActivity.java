@@ -16,6 +16,7 @@ import com.patrickarungari.tukenyahub.Fragments.applyIDFragment;
 import com.patrickarungari.tukenyahub.Fragments.graduation_clearance_Fragment;
 import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.R;
+import com.pushlink.android.PushLink;
 
 public class AcademicServicesActivity extends AppCompatActivity {
     TextView textView;
@@ -29,6 +30,12 @@ public class AcademicServicesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_academic_services);
         initUi();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PushLink.setCurrentActivity(this);
     }
 
     private void initUi() {
@@ -49,29 +56,18 @@ public class AcademicServicesActivity extends AppCompatActivity {
         findViewById(R.id.applyID).setOnClickListener(v -> {
             textView.setTextSize(24);
             textView.setText("APPLY / RENEW STUDENT ID");
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.containerLayout, new applyIDFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-            findViewById(R.id.grid).setVisibility(View.GONE);
+            setFragment(new applyIDFragment());
         });
         findViewById(R.id.defer).setOnClickListener(v -> {
             textView.setTextSize(22);
             textView.setText("Apply For Deferment of Studies");
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.containerLayout, new DeferFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-            findViewById(R.id.grid).setVisibility(View.GONE);
+            setFragment(new DeferFragment());
         });
         findViewById(R.id.graduate).setOnClickListener(v -> {
             textView.setTextSize(22);
             textView.setText("Initiate Clearance Online");
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.containerLayout, new graduation_clearance_Fragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-            findViewById(R.id.grid).setVisibility(View.GONE);
+            setFragment(new graduation_clearance_Fragment());
+
         });
         findViewById(R.id.exams).setOnClickListener(v -> startActivity(new Intent(AcademicServicesActivity.this, ExaminationsActivity.class)));
     }
@@ -79,6 +75,14 @@ public class AcademicServicesActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         button.performClick();
+    }
+
+    public void setFragment(Fragment fragment) {
+        findViewById(R.id.grid).setVisibility(View.GONE);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.containerLayout, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }
 

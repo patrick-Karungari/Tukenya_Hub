@@ -1,20 +1,23 @@
 package com.patrickarungari.tukenyahub.Activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,13 +26,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -39,53 +43,61 @@ import com.android.volley.toolbox.StringRequest;
 import com.anstrontechnologies.corehelper.AnstronCoreHelper;
 import com.iceteck.silicompressorr.FileUtils;
 import com.iceteck.silicompressorr.SiliCompressor;
-import com.mikhaellopez.circularimageview.CircularImageView;
 import com.nightlynexus.viewstatepageradapter.ViewStatePagerAdapter;
 import com.patrickarungari.tukenyahub.Modules.Constants;
+import com.patrickarungari.tukenyahub.Modules.PasswordStrength;
 import com.patrickarungari.tukenyahub.Modules.RequestHandler;
 import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.R;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
+import com.yalantis.ucrop.UCrop;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 
-import static android.os.Build.VERSION.SDK_INT;
+import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
+import static android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
+
+@RuntimePermissions
 public class SignupActivity extends AppCompatActivity {
     EditText password, regNum, name, email;
     TextView button, greetings, signUp_title;
-    private RelativeLayout frame;
     private ViewPager viewPager;
-    private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
-    private TextView[] dots;
     private int[] layouts;
-    private CardView btnNext;
     JSONObject jsonObject;
-    String code = "null";
+    String code = "null", strength;
     AlertDialog.Builder builder;
     AlertDialog alert;
     private String keyPass, keyReg;
-    private CircularImageView imageView;
+    private CircleImageView imageView;
     AnstronCoreHelper coreHelper;
-    private Uri filepath;
     private Bitmap bitmap;
+    ConstraintLayout frame;
     private static final int MY_SOCKET_TIMEOUT_MS = 15000;
-    private boolean isConnected;
+    // private UiHelper uiHelper = new UiHelper();
     private ProgressDialog progressDialog;
     private MaterialDialog mDialog2;
     private MaterialDialog mDialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +122,7 @@ public class SignupActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager);
         button = findViewById(R.id.button);
         dotsLayout = findViewById(R.id.layoutDots);
-        btnNext = findViewById(R.id.card_button);
+        CardView btnNext = findViewById(R.id.card_button);
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
@@ -120,36 +132,24 @@ public class SignupActivity extends AppCompatActivity {
         // adding bottom dots
         addBottomDots(0);
         coreHelper = new AnstronCoreHelper(this);
-        myViewPagerAdapter = new MyViewPagerAdapter(getApplicationContext());
+        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(getApplicationContext());
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-        greetings = findViewById(R.id.greetings);
+
         signUp_title = findViewById(R.id.signUp_title);
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page
-                // if last page home screen will be launched
-                int current = getItem(+1);
-                if (current < layouts.length) {
-                    // move to next screen
-                    viewPager.setCurrentItem(current, false);
-                } else {
-                    launchSignInScreen();
-                }
+
+        btnNext.setOnClickListener(v -> {
+            // checking for last page
+            // if last page home screen will be launched
+            int current = getItem();
+            if (current < layouts.length) {
+                // move to next screen
+                viewPager.setCurrentItem(current, false);
+            } else {
+                launchSignInScreen();
             }
         });
-        Calendar calendar = Calendar.getInstance();
-        int time_of_day = calendar.get(Calendar.HOUR_OF_DAY);
-        if (time_of_day < 12) {
-            greetings.setText("Good Morning");
-            frame.setBackground(getDrawable(R.drawable.good_morning_img));
-        } else if (time_of_day >= 12 && time_of_day < 16) {
-            greetings.setText("Good Afternoon");
-        } else {
-            greetings.setText("Good Evening");
-            frame.setBackground(getDrawable(R.drawable.good_night_img));
-        }
+
 
     }
 
@@ -159,14 +159,6 @@ public class SignupActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             addBottomDots(position);
-            if (position == 1) {
-                greetings.setVisibility(View.GONE);
-                signUp_title.setVisibility(View.GONE);
-
-            } else {
-                greetings.setVisibility(View.VISIBLE);
-                signUp_title.setVisibility(View.VISIBLE);
-            }
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
                 // last page. make button text to GOT IT
@@ -190,7 +182,7 @@ public class SignupActivity extends AppCompatActivity {
     };
 
     private void addBottomDots(int currentPage) {
-        dots = new TextView[layouts.length];
+        TextView[] dots = new TextView[layouts.length];
 
         int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
         int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
@@ -208,8 +200,8 @@ public class SignupActivity extends AppCompatActivity {
             dots[currentPage].setTextColor(colorsActive[currentPage]);
     }
 
-    private int getItem(int i) {
-        return viewPager.getCurrentItem() + i;
+    private int getItem() {
+        return viewPager.getCurrentItem() + 1;
     }
 
     private boolean validateForm() {
@@ -217,46 +209,53 @@ public class SignupActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(email.getText().toString())) {
             email.setError("Required");
             result = false;
-        } else {
-            email.setError(null);
         }
         if (TextUtils.isEmpty(password.getText().toString())) {
             password.setError("Required");
             result = false;
-        } else {
-            password.setError(null);
         }
         if (TextUtils.isEmpty(regNum.getText().toString())) {
             regNum.setError("Required");
             result = false;
-        } else {
-            regNum.setError(null);
         }
         if (TextUtils.isEmpty(name.getText().toString())) {
             name.setError("Required");
             result = false;
-        } else {
-            name.setError(null);
         }
         if (TextUtils.isEmpty(name.getText().toString()) || TextUtils.isEmpty(email.getText().toString())) {
             viewPager.setCurrentItem(0, false);
             if (TextUtils.isEmpty(name.getText().toString())) {
                 name.requestFocus();
+                result = false;
             }
             if (TextUtils.isEmpty(email.getText().toString())) {
                 email.requestFocus();
+                result = false;
             }
         } else {
             if (TextUtils.isEmpty(regNum.getText().toString())) {
                 regNum.requestFocus();
+                result = false;
             }
             if (TextUtils.isEmpty(password.getText().toString())) {
                 password.requestFocus();
+                result = false;
             }
         }
         if (bitmap == null) {
             Toast.makeText(Objects.requireNonNull(this).getApplicationContext(), "Please select Image", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
+            result = false;
+        }
+        if (!isValidEmailId(email.getText().toString().trim())) {
+            Toast.makeText(getApplicationContext(), "Invalid Email Address.", Toast.LENGTH_SHORT).show();
+            viewPager.setCurrentItem(0, false);
+            email.requestFocus();
+            result = false;
+        }
+        if (strength.equals("weak") || strength.equals("medium")) {
+            Toast.makeText(getApplicationContext(), "Choose a stronger password.", Toast.LENGTH_SHORT).show();
+            result = false;
         }
         return result;
     }
@@ -274,18 +273,26 @@ public class SignupActivity extends AppCompatActivity {
             registerUser();
         }
     }
+
     private void registerUser() {
-        progressDialog.show();
+        //progressDialog.show();
         final String uEmail = email.getText().toString().trim();
         final String uName = name.getText().toString().trim();
         final String Upassword = password.getText().toString().trim();
         final String uniNumber = regNum.getText().toString().trim();
         final String imageStr;
-        if (!isNetworkConnected()) {
-            mDialog2.show();
-            progressDialog.dismiss();
-            code = "null";
+        if (isNetworkConnected() || bitmap == null) {
+            if (bitmap == null) {
+                //progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(), "Please Upload Photo", Toast.LENGTH_LONG).show();
+            }
+            if (isNetworkConnected()) {
+                mDialog2.show();
+                code = "null";
+            }
+
         } else {
+            progressDialog.show();
             imageStr = getStringImage(bitmap);
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     Constants.URL_REGISTER,
@@ -299,6 +306,7 @@ public class SignupActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_LONG).show();
                                     keyPass = password.getText().toString();
                                     keyReg = regNum.getText().toString();
+                                    deleteCache(this);
                                     Intent intent = getIntent();
                                     String value = "OK";
                                     intent.putExtra("key", value);
@@ -337,7 +345,6 @@ public class SignupActivity extends AppCompatActivity {
                         if (!code.equals("1")) {
                             mDialog.show();
                         }
-
                         Log.i("Server Error", "[" + error + "]");
                     }) {
                 @Override
@@ -435,30 +442,9 @@ public class SignupActivity extends AppCompatActivity {
         final ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         assert cm != null;
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        isConnected = activeNetwork != null &&
+        boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        if (cm != null) {
-            if (SDK_INT < 23) {
-                final NetworkInfo ni = cm.getActiveNetworkInfo();
-
-                if (ni != null) {
-
-                    return isConnected = (ni.isConnected() && (ni.getType() == ConnectivityManager.TYPE_WIFI || ni.getType() == ConnectivityManager.TYPE_MOBILE));
-
-                } else {
-                    final Network n = cm.getActiveNetwork();
-
-                    if (n != null) {
-                        final NetworkCapabilities nc = cm.getNetworkCapabilities(n);
-
-                        assert nc != null;
-                        return isConnected = (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI));
-
-                    }
-                }
-            }
-        }
-        return isConnected;
+        return !isConnected;
     }
 
     private void alertBuilder() {
@@ -518,7 +504,7 @@ public class SignupActivity extends AppCompatActivity {
         });
         alert.create();
         mDialog = new MaterialDialog.Builder(this)
-                .setMessage("Some Error Occurred. Please try again Later. ")
+                .setMessage("We probably haven't paid for Wi-Fi.\nWe'll be back in a few.\nPlease try again later.")
                 .setTitle("Server Error")
                 .setCancelable(true)
                 .setAnimation("Timeout.json")
@@ -534,36 +520,42 @@ public class SignupActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        alert.show();
+        super.onBackPressed();
+        Intent intent = getIntent();
+        setResult(RESULT_OK, intent);
+
     }
 
+    @SuppressLint("IntentReset")
     private void showFileChooser() {
-        final CharSequence[] options = {"Choose from Gallery", "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose your profile picture");
+        new Thread(() -> {
+            final CharSequence[] options = {"Choose from Gallery", "Cancel"};
+            SignupActivity.this.runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+                builder.setTitle("Choose your profile picture");
 
-        builder.setItems(options, new DialogInterface.OnClickListener() {
+                builder.setItems(options, (dialog, item) -> {
 
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
+                    if (options[item].equals("Take Photo")) {
+                        Intent takePicture = new Intent(ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(takePicture, 0);
 
-                if (options[item].equals("Take Photo")) {
-                    Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(takePicture, 0);
+                    } else if (options[item].equals("Choose from Gallery")) {
+                        @SuppressLint("IntentReset") Intent pickPhoto = new Intent(Intent.ACTION_PICK, EXTERNAL_CONTENT_URI);
+                        pickPhoto.setType("image/*");
+                        startActivityForResult(pickPhoto, 1);
 
-                } else if (options[item].equals("Choose from Gallery")) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    pickPhoto.setType("image/*");
-                    startActivityForResult(pickPhoto, 1);
+                    } else if (options[item].equals("Cancel")) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create();
+                builder.show();
+            });
 
-                } else if (options[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.create();
-        builder.show();
+
+        }).start();
     }
 
     @Override
@@ -575,39 +567,107 @@ public class SignupActivity extends AppCompatActivity {
                     if (resultCode == RESULT_OK && data != null) {
                         bitmap = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
                         imageView.setImageBitmap(bitmap);
+
                     }
 
                     break;
                 case 1:
                     if (resultCode == RESULT_OK && data != null) {
-                        filepath = data.getData();
                         try {
-                            bitmap = compressImage(filepath);
-                            imageView.setImageBitmap(bitmap);
+                            Uri sourceUri = data.getData(); // 1
+                            File file = getImageFile(); // 2
+                            Uri destinationUri = Uri.fromFile(file);  // 3
+                            openCropActivity(sourceUri, destinationUri);  // 4
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                     }
                     break;
             }
         }
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            if (data != null) {
+                Uri uri = UCrop.getOutput(data);
+                showImage(uri);
+            }
+        }
+
     }
 
-    private Bitmap compressImage(Uri imageUri) throws IOException {
-        Bitmap imageBitmap;
-        if (imageUri != null) {
-
-            imageBitmap = SiliCompressor.with(this)
-                    .getCompressBitmap(FileUtils.getPath(this, imageUri), false);
-
-            String size = AnstronCoreHelper.getReadableFileSize(imageBitmap.getAllocationByteCount());
-            Toast.makeText(this, size, Toast.LENGTH_LONG).show();
-            return imageBitmap;
-
-        } else {
-            return null;
+    private void showImage(Uri imageUri) {
+        try {
+            compressImage(imageUri);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Please select different profile picture.", Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    private void openCropActivity(Uri sourceUri, Uri destinationUri) {
+        UCrop.Options options = new UCrop.Options();
+        options.setCircleDimmedLayer(true);
+        options.setCropFrameColor(this.getColor(R.color.colorAccent));
+        UCrop.of(sourceUri, destinationUri)
+                .start(this);
+
+    }
+
+    private File getImageFile() throws IOException {
+        String imageFileName = "JPEG_" + System.currentTimeMillis() + "_";
+        File storageDir = new File(
+                Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DCIM
+                ), "Camera"
+        );
+        System.out.println(storageDir.getAbsolutePath());
+        if (storageDir.exists())
+            System.out.println("File exists");
+        else
+            System.out.println("File not exists");
+        return File.createTempFile(
+                imageFileName, ".jpg", storageDir
+        );
+    }
+
+    public static void deleteCache(Context context) {
+        File dir = context.getCacheDir();
+        deleteDir(dir);
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String child : children) {
+                boolean success = deleteDir(new File(dir, child));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if (dir != null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+
+    private void compressImage(Uri imageUri) {
+
+        final Bitmap imageBitmap;
+        try {
+            imageBitmap = SiliCompressor.with(SignupActivity.this)
+                    .getCompressBitmap(FileUtils.getPath(SignupActivity.this, imageUri), false);
+            String size = AnstronCoreHelper.getReadableFileSize(imageBitmap.getAllocationByteCount());
+            bitmap = imageBitmap;
+            Toast.makeText(SignupActivity.this, size, Toast.LENGTH_LONG).show();
+            imageView.setImageBitmap(imageBitmap);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private String getStringImage(Bitmap bmp) {
@@ -617,39 +677,206 @@ public class SignupActivity extends AppCompatActivity {
         return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
 
+    public void onBackPressed(View view) {
+        onBackPressed();
+    }
+
+    private boolean isValidEmailId(String email) {
+
+        return Pattern.compile("^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$").matcher(email).matches();
+    }
+
+    @NeedsPermission({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void showGallery() {
+        showFileChooser();
+    }
+
+    void getPermission() {
+        SignupActivityPermissionsDispatcher.showGalleryWithPermissionCheck(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        SignupActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @OnShowRationale({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void showGalleryRationale(final PermissionRequest request) {
+        permissionsRationale(request);
+    }
+
+    @OnPermissionDenied({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void galleryDenied() {
+        permissionsDenied();
+    }
+
+    @OnNeverAskAgain({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    void onNeverAskAgain() {
+        permissionsDenied();
+    }
+
+    public void permissionsRationale(final PermissionRequest request) {
+        AlertDialog mdialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
+                .setMessage(R.string.all_permissions_denied_feedback)
+                .setPositiveButton(R.string.permission_rationale_settings_button_text, (dialog, which) -> {
+                    dialog.dismiss();
+                    request.proceed();
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, 101);
+                    //token.continuePermissionRequest();
+                })
+                .setOnDismissListener(dialog -> {
+                    //token.cancelPermissionRequest();
+                })
+                .create();
+        mdialog.setCanceledOnTouchOutside(false);
+        mdialog.setCancelable(false);
+        mdialog.show();
+    }
+
+    public void permissionsDenied() {
+        AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_rationale_title)
+                .setMessage(R.string.permission_rationale_message)
+                .setPositiveButton(R.string.permission_rationale_settings_button_text, (mdialog, which) -> {
+                    mdialog.dismiss();
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, 101);
+                    //token.continuePermissionRequest();
+                })
+                .setOnDismissListener(dialog1 -> {
+                    //token.cancelPermissionRequest();
+                })
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+    }
+
     /**
      * View pager adapter
      */
     public class MyViewPagerAdapter extends ViewStatePagerAdapter {
-        private final Context context;
-        private LayoutInflater layoutInflater;
+        TextView passwordStrengthXML;
+        CardView cardsweak, strong, medium, very_strong;
 
-        public MyViewPagerAdapter(Context context) {
-            this.context = context;
+        MyViewPagerAdapter(Context context) {
         }
 
         @Override
         protected View createView(ViewGroup container, int position) {
-            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //View view = LayoutInflater.from(context).inflate(layouts[position], container, false);
-            View view = layoutInflater.inflate(layouts[position], container, false);
-            if (position == 1) {
-                imageView = view.findViewById(R.id.profile_image);
-                imageView.setOnClickListener(v -> showFileChooser());
-            } else {
+            View view = Objects.requireNonNull(layoutInflater).inflate(layouts[position], container, false);
+            greetings = findViewById(R.id.greeting);
+            LinearLayout root = view.findViewById(R.id.root);
+            password = view.findViewById(R.id.password_reg);
+            cardsweak = view.findViewById(R.id.weak);
+            strong = view.findViewById(R.id.strong);
+            medium = view.findViewById(R.id.medium);
+            very_strong = view.findViewById(R.id.very_strong);
+            Calendar calendar = Calendar.getInstance();
+            int time_of_day = calendar.get(Calendar.HOUR_OF_DAY);
 
+            if (position == 1) {
+                if (time_of_day < 12) {
+                    greetings.setText(R.string.good_morning);
+                    frame.setBackground(getDrawable(R.drawable.good_morning_img));
+                } else if (time_of_day < 16) {
+                    greetings.setText(R.string.good_afternoon);
+                } else {
+                    greetings.setText(R.string.good_evening);
+                    frame.setBackground(getDrawable(R.drawable.good_night_img));
+                }
+                passwordStrengthXML = view.findViewById(R.id.passwordStrength);
+                imageView = view.findViewById(R.id.profile_image);
+                password.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        root.setVisibility(View.VISIBLE);
+                        calculatePasswordStrength(s.toString());
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                imageView.setOnClickListener(v -> getPermission());
             }
             //container.addView(view);
             return view;
-
         }
+
+        private void calculatePasswordStrength(String str) {
+            // getCards();
+            // Now, we need to define a PasswordStrength enum
+            // with a calculate static method returning the password strength
+
+            PasswordStrength passwordStrength = PasswordStrength.calculate(str);
+            passwordStrengthXML.setText(passwordStrength.msg);
+            int code = passwordStrength.code;
+            switch (code) {
+                //weak
+                case 1:
+                    cardsweak.setBackgroundColor(passwordStrength.color);
+                    medium.setBackgroundResource(R.color.cardBackground);
+                    strong.setBackgroundResource(R.color.cardBackground);
+                    very_strong.setBackgroundResource(R.color.cardBackground);
+                    passwordStrengthXML.setTextColor(passwordStrength.color);
+                    strength = "weak";
+                    break;
+                //medium
+                case 2:
+                    cardsweak.setBackgroundColor(passwordStrength.color);
+                    medium.setBackgroundColor(passwordStrength.color);
+                    strong.setBackgroundResource(R.color.cardBackground);
+                    very_strong.setBackgroundResource(R.color.cardBackground);
+                    passwordStrengthXML.setTextColor(passwordStrength.color);
+                    strength = "medium";
+                    break;
+                //strong
+                case 3:
+                    very_strong.setBackgroundResource(R.color.cardBackground);
+                    cardsweak.setBackgroundColor(passwordStrength.color);
+                    medium.setBackgroundColor(passwordStrength.color);
+                    strong.setBackgroundColor(passwordStrength.color);
+                    passwordStrengthXML.setTextColor(passwordStrength.color);
+                    strength = "strong";
+                    break;
+                //verStrong
+                case 4:
+                    cardsweak.setBackgroundColor(passwordStrength.color);
+                    medium.setBackgroundColor(passwordStrength.color);
+                    strong.setBackgroundColor(passwordStrength.color);
+                    very_strong.setBackgroundColor(passwordStrength.color);
+                    passwordStrengthXML.setTextColor(passwordStrength.color);
+                    strength = "very strong";
+                    break;
+                default:
+            }
+            // root.setBackgroundColor(passwordStrength.color);
+        }
+
 
         @Override
         public int getCount() {
             return layouts.length;
         }
-
-
     }
+
 
 }

@@ -7,12 +7,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="true"
+        android:paddingTop="0dp">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/usernameCardview"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:layout_above="@id/passwordCardview"
             android:layout_centerInParent="true"
             android:layout_marginStart="40dp"
@@ -31,43 +32,51 @@
                 android:drawableEnd="@drawable/regnum"
                 android:drawableTint="@color/colorProgressBar"
                 android:ems="10"
+                android:fontFamily="sans-serif"
                 android:hint="@string/RegistrationNumber"
                 android:imeOptions="actionNext"
                 android:inputType="textCapCharacters"
                 android:paddingStart="20dp"
                 android:paddingEnd="10dp"
                 android:textColor="@color/colorTextView"
-                android:textColorHint="@color/colorTextView" />
+                android:textColorHint="@color/colorTextView"
+                android:textSize="18sp" />
 
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/passwordCardview"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:layout_centerInParent="true"
             android:layout_marginStart="40dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="40dp"
-            android:background="@drawable/edit_text_background"
             app:cardCornerRadius="20dp">
 
-            <EditText
+            <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/edit_text_background"
-                android:drawableEnd="@drawable/password_lock"
-                android:drawableTint="@color/colorProgressBar"
-                android:ems="10"
+
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif"
                 android:hint="Password"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:paddingStart="20dp"
                 android:paddingEnd="10dp"
                 android:textColor="@color/colorTextView"
-                android:textColorHint="@color/colorTextView" />
+                android:textColorHint="@color/colorTextView"
+                android:textSize="18sp"
+                app:boxBackgroundMode="none"
+                app:drawable_hide="@drawable/ic_visibility_black_18dp"
+                app:drawable_show="@drawable/ic_visibility_off_black_18dp"
+                app:tint_color="@color/colorAccent" />
+
+
         </com.google.android.material.card.MaterialCardView>
+
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
@@ -87,7 +96,6 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"

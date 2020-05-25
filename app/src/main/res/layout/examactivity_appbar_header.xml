@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinatorLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minHeight="50dp"
@@ -9,7 +8,6 @@
     app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/activity_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -34,16 +32,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/homeTo2"
-            android:layout_width="40dp"
-            android:layout_height="33dp"
-            android:layout_marginStart="8dp"
-            android:tint="@color/material_dialog_background"
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:mrl_rippleAlpha="0.1"
+            app:mrl_rippleColor="@color/colorSplashText"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleDimension="10dp"
+            app:mrl_rippleDuration="350"
+            app:mrl_rippleFadeDuration="75"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleRoundedCorners="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/title"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/back" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/homeTo2"
+                android:layout_width="40dp"
+                android:layout_height="33dp"
+                android:layout_marginStart="8dp"
+                android:tint="@color/material_dialog_background"
+
+                app:srcCompat="@drawable/back" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

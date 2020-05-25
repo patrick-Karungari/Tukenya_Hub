@@ -22,14 +22,15 @@ import androidx.cardview.widget.CardView;
 import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.Modules.SharedPrefManager;
 import com.patrickarungari.tukenyahub.R;
+import com.pushlink.android.PushLink;
 
 public class MainActivity extends AppCompatActivity {
     TextView username, regNo;
     ImageView imageView;
-    CardView academicServ,logout;
+    CardView academicServ, logout;
     AlertDialog.Builder builder;
     AlertDialog alert;
-
+    CardView examResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUi() {
+        examResults = findViewById(R.id.exam_results);
         username = findViewById(R.id.user_name);
         logout = findViewById(R.id.logout);
         regNo = findViewById(R.id.user_id);
@@ -58,14 +60,20 @@ public class MainActivity extends AppCompatActivity {
             });
         });
         thread.start();
+        examResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ExaminationsActivity.class));
+            }
+        });
         academicServ.setOnClickListener(view -> MainActivity.this.quickLinks());
-        logout.setOnClickListener(v -> {
 
+        logout.setOnClickListener(v -> {
             SharedPrefManager.getInstance(getApplicationContext()).logout();
             String value = "OK";
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("key", value);
-            setResult(200, intent);
+            setResult(RESULT_OK, intent);
             finish();
 
         });
@@ -74,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap decodeImage(String imageStr) {
         byte[] decodedString = Base64.decode(imageStr, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PushLink.setCurrentActivity(this);
     }
 
     public void quickLinks() {
@@ -140,4 +154,5 @@ public class MainActivity extends AppCompatActivity {
         alert.create();
         // alert.show();
     }
+
 }

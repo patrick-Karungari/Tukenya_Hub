@@ -6,8 +6,7 @@ package com.patrickarungari.tukenyahub.Modules;
 
 public class Constants {
 
-    private static final String ROOT_URL = "https://37ec37ff.ngrok.io/TukenyaHub/v1/";
-
+    private static final String ROOT_URL = "https://47edff7b.ngrok.io/TukenyaHub/v1/";
     public static final String URL_REGISTER = ROOT_URL+"registerUser.php";
     public static final String URL_LOGIN = ROOT_URL+"userLogin.php";
 

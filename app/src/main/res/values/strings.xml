@@ -1,50 +1,14 @@
 <resources>
     <string name="app_name">Tukenya Hub</string>
-    <string name="action_settings">Settings</string>
-    <string name="data">Welcome! \n
-        Quick access to major websites:- \n
-        <a href="http://www.google.com">Google</a> \n
-        <a href="http://www.facebook.com">Facebook</a> \n
-    And you can follow tutorials on Java and android here <a href="http://www.javapapers.com">JavaPapers</a>  </string>
-    <string name="back">back</string>
-    <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
-    <string name="app_names">Tukenya Hub</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in </string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="wrong_credentials">"Invalid Username or Password.\nPlease Try Again!"</string>
-    <string name="Welcome">Welcome</string>
-    <string name="error_incorrect_password">Incorrect Password</string>
-    <string name="error_field_required">Field Required</string>
-    <string name="error_invalid_email">Invalid Email</string>
-    <string name="error_invalid_password">Invalid Password</string>
-    <string name="permission_rationale">Please allow all Permissions</string>
-    <string name="moto">Training For The Real World</string>
-    <string name="name">TUKENYA HUB</string>
-    <string name="todo">TODO</string>
     <string name="student_online_portal">Student Online Portal</string>
     <string name="user_photo">user_photo</string>
-    <string name="minimum_password">min 8 characters</string>
-    <string name="auth_failed">Authentication Failed</string>
-    <string name="skip">Skip</string>
-    <string name="login">Login</string>
-    <string name="forget_password">Forgot Password?</string>
     <string name="sign_up">Sign Up</string>
     <string name="motto">Training For The Real World</string>
     <string name="welcome_back">Welcome Back</string>
     <string name="RegistrationNumber">Registration Number</string>
-    <string name="password">Password</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="string_choose_file">Choose Image</string>
-    <string name="string_upload_image">Upload Image</string>
-    <string name="string_view_image">View Image</string>
     <string-array name="sem_of_study">
         <item>Select One…</item>
         <item>SEM 1</item>
@@ -107,36 +71,26 @@
         <item>2025</item>
     </string-array>
     <string name="title_activity_examinations">Examinations</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
     <string name="tab_regExam">Registration</string>
     <string name="tab_provResults">Provisional</string>
     <string name="tab_examResults">Results</string>
-    <string name="collapsing_appbar">\@xml/collaping_appbar</string>
-    <string name="title_activity_help">helpActivity</string>
     <string name="next">Next</string>
     <string name="start">Register</string>
     <string name="user_name">Name</string>
 
 
-    <string name="ask_for_camera_permission_button">Camera</string>
-    <string name="ask_for_storage_permission_button">Storage</string>
-    <string name="ask_for_all_permissions_button">Request all</string>
-    <string name="permission_granted_feedback">GRANTED</string>
-    <string name="permission_denied_feedback">DENIED</string>
-    <string name="permission_permanently_denied_feedback">PERMANENTLY DENIED</string>
-    <string name="permission_unknown_feedback">UNKNOWN</string>
-    <string name="contacts_permission_denied_feedback">Contacts permission is needed for doing some magic</string>
-    <string name="all_permissions_denied_feedback">All those permissions are needed to register so please, allow it!</string>
-    <string name="camera_permission_denied_feedback">Camera permission is needed to register so please, allow it!</string>
-    <string name="storage_permission_denied_feedback">Storage permission is needed to register so please, allow it!</string>
-    <string name="storage_permission_denied_dialog_title">Storage permission request</string>
-    <string name="storage_permission_denied_dialog_feedback">Registeration will not be available until you accept the permission request</string>
-    <string name="permission_rationale_title">We need this permission</string>
+    <string name="all_permissions_denied_feedback">All those permissions are needed to register so please, allow them!</string>
+    <string name="permission_rationale_title">Please Enable This Permissions</string>
     <string name="permission_rationale_message">This permission is needed to register so please, allow it!</string>
     <string name="permission_rationale_settings_button_text">SETTINGS</string>
-    <string name="audio_permission_denied_dialog_title">Audio permission request</string>
-    <string name="audio_permission_denied_dialog_feedback">Audio recording will not be available until you accept the permission request</string>
+    <string name="weak">WEAK</string>
+    <string name="medium">MEDIUM</string>
+    <string name="strong">STRONG</string>
+    <string name="noColor">Empty</string>
+    <string name="very_strong">VERY STRONG</string>
+    <string name="good_morning">Good Morning</string>
+    <string name="good_afternoon">Good Afternoon</string>
+    <string name="good_evening">Good Evening</string>
 
 
 </resources>
