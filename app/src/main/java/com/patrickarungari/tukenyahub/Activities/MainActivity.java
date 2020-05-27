@@ -24,6 +24,8 @@ import com.patrickarungari.tukenyahub.Modules.SharedPrefManager;
 import com.patrickarungari.tukenyahub.R;
 import com.pushlink.android.PushLink;
 
+import spencerstudios.com.bungeelib.Bungee;
+
 public class MainActivity extends AppCompatActivity {
     TextView username, regNo;
     ImageView imageView;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ExaminationsActivity.class));
             }
         });
-        academicServ.setOnClickListener(view -> MainActivity.this.quickLinks());
+        academicServ.setOnClickListener(view -> MainActivity.this.setAcademicServ());
 
         logout.setOnClickListener(v -> {
             SharedPrefManager.getInstance(getApplicationContext()).logout();
@@ -90,9 +92,10 @@ public class MainActivity extends AppCompatActivity {
         PushLink.setCurrentActivity(this);
     }
 
-    public void quickLinks() {
+    public void setAcademicServ() {
         Intent intent = new Intent(this, AcademicServicesActivity.class);
         startActivity(intent);
+        Bungee.swipeLeft(this);
     }
 
     @Override

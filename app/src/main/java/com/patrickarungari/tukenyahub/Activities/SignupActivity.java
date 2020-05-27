@@ -72,6 +72,7 @@ import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
+import spencerstudios.com.bungeelib.Bungee;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 import static android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -313,6 +314,7 @@ public class SignupActivity extends AppCompatActivity {
                                     intent.putExtra("regNum", keyReg);
                                     intent.putExtra("password", keyPass);
                                     setResult(RESULT_OK, intent);
+                                    Bungee.fade(this);
                                     finish();
                                     break;
                                 case "2":

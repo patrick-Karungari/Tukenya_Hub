@@ -30,7 +30,7 @@ public class DeferFragment extends Fragment {
     private Button button;
     private NiceSpinner spinner2, spinner, spinner3;
     private EditText cardView;
-
+    private ArrayAdapter<CharSequence> adapter, arrayAdapter3, arrayAdapter;
     public DeferFragment() {
         // Required empty public constructor
     }
@@ -42,10 +42,26 @@ public class DeferFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.defer_fragment, container, false);
-        Thread thread = new Thread(() -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> alertBuilder(view)));
-        thread.start();
-        initUi(view);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()),
+                        R.array.year_of_study, android.R.layout.simple_spinner_item);
 
+                arrayAdapter3 = ArrayAdapter.createFromResource(getActivity(),
+                        R.array.sem_of_study, android.R.layout.simple_spinner_item);
+                arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
+                        R.array.term_of_deferment, android.R.layout.simple_spinner_item);
+                Objects.requireNonNull(DeferFragment.this.getActivity()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initUi(view);
+                        DeferFragment.this.alertBuilder(view);
+                    }
+                });
+            }
+        });
+        thread.start();
         return view;
     }
 
@@ -56,22 +72,14 @@ public class DeferFragment extends Fragment {
         int month = c.get(Calendar.MONTH);
         int year = c.get(Calendar.YEAR);
         datePickerDialog = new DatePickerDialog(Objects.requireNonNull(getContext()), (view1, mYear, mMonth, mDay) -> datePicker.setText(mDay + "/" + mMonth + "/" + mYear), year, month, day);
+        datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
         datePicker.setCursorVisible(false);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.year_of_study, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter<CharSequence> arrayAdapter3 = ArrayAdapter.createFromResource(getActivity(),
-                R.array.sem_of_study, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.term_of_deferment, android.R.layout.simple_spinner_item);
 
-        spinner.setAdapter(arrayAdapter);
-        spinner2.setAdapter(adapter);
-        spinner3.setAdapter(arrayAdapter3);
     }
 
     private void initUi(View view) {
+
         button = view.findViewById(R.id.button2);
         spinner = view.findViewById(R.id.spinner);
         spinner2 = view.findViewById(R.id.current_year_spinner);
@@ -82,7 +90,9 @@ public class DeferFragment extends Fragment {
             datePicker.setShowSoftInputOnFocus(false);
             datePickerDialog.show();
         });
-
+        spinner.setAdapter(arrayAdapter);
+        spinner2.setAdapter(adapter);
+        spinner3.setAdapter(arrayAdapter3);
         datePicker.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardBackground"
+    android:background="@color/cardColor"
     tools:context=".Fragments.graduation_clearance_Fragment">
 
     <ScrollView
@@ -19,41 +19,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/cardBackground"
             android:orientation="vertical"
             android:padding="8dp">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
-                android:background="@color/cardBackground"
-                android:elevation="20dp"
-                android:orientation="vertical"
-                android:paddingStart="15dp"
-                android:paddingLeft="15dp"
-                android:paddingTop="15dp"
-                android:paddingEnd="15dp"
-                android:paddingRight="15dp"
-                android:paddingBottom="15dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="20dp"
-                app:contentPadding="15dp"
-                app:layout_constraintHeight_percent=".7">
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:elevation="30dp"
+                app:cardBackgroundColor="@color/colorSplashText"
+                app:cardCornerRadius="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginRight="0dp"
-                    android:background="@color/cardColor"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_percent=".7"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@color/colorSplashText"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -68,28 +52,44 @@
                             android:layout_marginBottom="8dp"
                             android:layout_weight="1"
                             android:gravity="bottom"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:weightSum="4">
 
                             <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="center_vertical"
                                 android:text="Year Of Completion"
                                 android:textAlignment="viewEnd"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
-                            <Spinner
-                                android:id="@+id/spinner4"
+                            <androidx.cardview.widget.CardView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-
-                                android:layout_margin="4dp"
-                                android:layout_marginEnd="4dp"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="8dp"
                                 android:layout_weight="1"
-                                android:background="@color/colorSplashText"
-                                android:backgroundTint="@color/cardColor"
-                                android:textAlignment="center" />
+                                app:cardBackgroundColor="@color/colorSplashText"
+                                app:cardCornerRadius="10dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/cardview9">
+
+                                <org.angmarch.views.NiceSpinner
+                                    android:id="@+id/spinner4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:dropDownSelector="@drawable/spinner_ripple"
+                                    android:gravity="center"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/colorAccent"
+                                    android:textSize="18sp"
+                                    app:arrowTint="@color/colorAccent"
+                                    app:textTint="@color/colorAccent" />
+                            </androidx.cardview.widget.CardView>
                         </LinearLayout>
 
                         <LinearLayout
@@ -102,29 +102,42 @@
 
                             <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="center_vertical"
                                 android:text="Sem/Term Of Completion"
                                 android:textAlignment="viewEnd"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
-                            <Spinner
-                                android:id="@+id/spinner5"
+                            <androidx.cardview.widget.CardView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
-                                android:layout_marginEnd="4dp"
-                                android:layout_marginRight="4dp"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="8dp"
                                 android:layout_weight="1"
-                                android:background="@color/colorSplashText"
-                                android:backgroundTint="@color/cardColor"
-                                android:textAlignment="center" />
+                                app:cardBackgroundColor="@color/colorSplashText"
+                                app:cardCornerRadius="10dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/cardview9">
+
+                                <org.angmarch.views.NiceSpinner
+                                    android:id="@+id/spinner5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:dropDownSelector="@drawable/spinner_ripple"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/colorAccent"
+                                    android:textSize="18sp"
+                                    app:arrowTint="@color/colorAccent"
+                                    app:textTint="@color/colorAccent" />
+                            </androidx.cardview.widget.CardView>
 
                         </LinearLayout>
 
                         <LinearLayout
-                        android:layout_width="match_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:layout_weight="1"
@@ -133,23 +146,25 @@
 
                             <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="center_vertical"
                                 android:text="@string/prompt_email"
                                 android:textAlignment="viewEnd"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
                             <EditText
-                                android:id="@+id/username"
+                                android:id="@+id/email"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
-                                android:layout_marginEnd="4dp"
-                                android:layout_marginRight="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="8dp"
                                 android:layout_weight="1"
                                 android:ems="10"
+                                android:imeOptions="actionNext"
                                 android:inputType="textEmailAddress"
+                                android:paddingStart="10dp"
                                 android:textColor="@color/colorAccent" />
 
                         </LinearLayout>
@@ -164,8 +179,9 @@
 
                             <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="center_vertical"
                                 android:text="Phone Number"
                                 android:textAlignment="textEnd"
                                 android:textSize="16sp"
@@ -174,10 +190,13 @@
                             <EditText
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="8dp"
                                 android:layout_weight="1"
                                 android:ems="10"
+                                android:imeOptions="actionDone"
                                 android:inputType="phone"
+                                android:paddingStart="10dp"
                                 android:textColor="@color/colorAccent" />
                         </LinearLayout>
                     </LinearLayout>

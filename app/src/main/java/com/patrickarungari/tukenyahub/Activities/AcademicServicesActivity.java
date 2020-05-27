@@ -18,6 +18,8 @@ import com.patrickarungari.tukenyahub.Modules.ScreenRotation;
 import com.patrickarungari.tukenyahub.R;
 import com.pushlink.android.PushLink;
 
+import spencerstudios.com.bungeelib.Bungee;
+
 public class AcademicServicesActivity extends AppCompatActivity {
     TextView textView;
     ImageView button;
@@ -50,6 +52,7 @@ public class AcademicServicesActivity extends AppCompatActivity {
                 textView.setText("ACADEMIC SERVICES");
             } else {
                 startActivity(new Intent(this, MainActivity.class));
+                Bungee.swipeRight(this);
             }
 
         });
@@ -78,11 +81,12 @@ public class AcademicServicesActivity extends AppCompatActivity {
     }
 
     public void setFragment(Fragment fragment) {
-        findViewById(R.id.grid).setVisibility(View.GONE);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.swipe_left_enter, R.anim.swipe_right_exit, R.anim.swipe_left_enter, R.anim.swipe_right_exit);
         fragmentTransaction.add(R.id.containerLayout, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+        findViewById(R.id.grid).setVisibility(View.GONE);
     }
 }
 

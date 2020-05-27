@@ -2,12 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -47,11 +47,11 @@
                     android:id="@+id/current_year_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:dropDownSelector="@drawable/spinner_ripple"
                     android:textAlignment="center"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp"
                     app:arrowTint="@color/colorAccent"
-                    app:backgroundSelector="@color/colorSplashText"
                     app:textTint="@color/colorAccent" />
             </androidx.cardview.widget.CardView>
 
@@ -92,11 +92,11 @@
                     android:id="@+id/spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:dropDownSelector="@drawable/spinner_ripple"
                     android:textAlignment="center"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp"
                     app:arrowTint="@color/colorAccent"
-                    app:backgroundSelector="@color/colorSplashText"
                     app:textTint="@color/colorAccent" />
             </androidx.cardview.widget.CardView>
 
@@ -136,11 +136,11 @@
                     android:id="@+id/spinner3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:dropDownSelector="@drawable/spinner_ripple"
                     android:textAlignment="center"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp"
                     app:arrowTint="@color/colorAccent"
-                    app:backgroundSelector="@color/colorSplashText"
                     app:textTint="@color/colorAccent" />
             </androidx.cardview.widget.CardView>
 
@@ -180,7 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:background="@color/colorSplashText"
+                    android:background="@drawable/spinner_ripple"
                     android:ems="10"
                     android:enabled="true"
                     android:hint="RESUMPTION DATE"
@@ -196,7 +196,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="350dp"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:weightSum="5">
@@ -220,15 +220,13 @@
                 android:layout_weight="5"
                 android:elevation="20dp"
                 app:cardBackgroundColor="@color/colorTextView"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="20dp"
-                app:cardMaxElevation="20dp">
+                app:cardCornerRadius="10dp">
 
                 <EditText
                     android:id="@+id/quoteTextArea2"
                     style="@style/Base.TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="match_parent"
                     android:background="@color/colorSplashText"
                     android:ems="10"
                     android:enabled="true"
@@ -246,21 +244,20 @@
                     app:layout_constraintStart_toStartOf="parent" />
             </androidx.cardview.widget.CardView>
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:backgroundTint="@color/design_default_color_error"
-                android:elevation="20dp"
-                android:text="Submit Deferment Request"
-                android:textSize="18sp"
-                app:cornerRadius="10dp" />
-
         </LinearLayout>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/design_default_color_error"
+            android:text="Submit Deferment Request"
+            android:textSize="18sp"
+            app:cornerRadius="10dp" />
     </LinearLayout>
 
 

@@ -2,43 +2,83 @@ apply plugin: 'com.android.application'
 
 
 android {
+
+    
     compileSdkVersion 29
     buildToolsVersion '29.0.3'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    defaultConfig {
-        applicationId "com.patrickarungari.tukenyahub"
-        minSdkVersion 23
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.1"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            android.applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "${variant.name}-${variant.versionName}.apk"
-                }
-            }
         }
-    }
 
+    }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-    applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "${"Tukenya_Hub"}_${variant.buildType.name}_${defaultConfig.versionName}.apk"
-        }
+
+    def versionPropsFile = file('version.properties')
+    def value = 0
+    Properties versionProps = new Properties()
+    if (!versionPropsFile.exists()) {
+        versionProps['VERSION_PATCH'] = "1"
+        versionProps['VERSION_NUMBER'] = "1"
+        versionProps['VERSION_BUILD'] = "1"
+        versionProps.store(versionPropsFile.newWriter(), null)
     }
+
+    if (versionPropsFile.canRead()) {
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def runTasks = gradle.startParameter.taskNames
+        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
+            value = 1
+        }
+        def versionMajor = 1
+        def versionMinor = 0
+        def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
+        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+        def versionNumber = versionProps['VERSION_NUMBER'].toInteger() + value
+        versionProps['VERSION_PATCH'] = versionPatch.toString()
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
+        versionProps['VERSION_NUMBER'] = versionNumber.toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+
+        defaultConfig {
+            applicationId "com.patrickarungari.tukenyahub"
+            minSdkVersion 23
+            targetSdkVersion 29
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+            versionCode versionProps['VERSION_NUMBER'].toInteger()
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
+        }
+        applicationVariants.all { variant ->
+            if ( variant.buildType.name == "release") {
+                variant.outputs.all { output ->
+                    def fileNaming = "apk/RELEASE"
+                    if (output.outputFile != null && output.outputFile.name.endsWith('.apk')) {
+                        def outputDirPath = new File("${getProject().getRootDir()}/${fileNaming}")
+                        variant.packageApplicationProvider.get().outputDirectory = outputDirPath
+                        def apkFileName = "TukenyaHub_v${android.defaultConfig.versionName}.apk"
+                        output.outputFileName = apkFileName
+                    }
+                }
+            }
+        }
+    } else {
+        throw new FileNotFoundException("Could not read version.properties!")
+    }
+
+
+
+
+
 }
 
 dependencies {
@@ -83,6 +123,7 @@ dependencies {
     implementation 'com.github.arcadefire:nice-spinner:1.4.4'
     implementation 'com.github.traex.rippleeffect:library:1.3'
     implementation 'com.balysv:material-ripple:1.0.2'
+    implementation 'com.github.Binary-Finery:Bungee:2.0'
     
 
 }

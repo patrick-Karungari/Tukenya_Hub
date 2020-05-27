@@ -7,34 +7,19 @@
     app:layoutDescription="@xml/scene_09"
     app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:gravity="center"
-            android:minHeight="?actionBarSize"
-            android:padding="@dimen/appbar_padding"
-            android:text="EXAMINATIONS"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-            android:textColor="@color/colorAccent"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <com.balysv.materialripple.MaterialRippleLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             app:mrl_rippleAlpha="0.1"
             app:mrl_rippleColor="@color/colorSplashText"
             app:mrl_rippleDelayClick="true"
@@ -43,23 +28,36 @@
             app:mrl_rippleFadeDuration="75"
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
-            app:mrl_rippleRoundedCorners="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/title"
-            app:layout_constraintTop_toTopOf="parent">
+            app:mrl_rippleRoundedCorners="10dp">
 
             <ImageView
                 android:id="@+id/homeTo2"
-                android:layout_width="40dp"
-                android:layout_height="33dp"
-                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
                 android:tint="@color/material_dialog_background"
-
-                app:srcCompat="@drawable/back" />
+                app:srcCompat="@drawable/abc_ic_ab_back_material" />
         </com.balysv.materialripple.MaterialRippleLayout>
 
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="?actionBarSize"
+            android:padding="@dimen/appbar_padding"
+            android:text="EXAMINATIONS"
+            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+            android:textColor="@color/colorAccent"
+            android:textSize="24sp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

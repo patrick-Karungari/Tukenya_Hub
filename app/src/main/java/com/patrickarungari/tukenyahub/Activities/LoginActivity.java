@@ -65,6 +65,7 @@ import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
+import spencerstudios.com.bungeelib.Bungee;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.view.View.VISIBLE;
@@ -108,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             startActivityForResult(new Intent(this, MainActivity.class), REQUEST_CODE);
+            Bungee.card(this);
             finish();
         }
     }
@@ -256,6 +258,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void OpenSignupPage(View view) {
         startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE);
+        Bungee.fade(this);
     }
 
     @Override
@@ -348,6 +351,7 @@ public class LoginActivity extends AppCompatActivity {
                                             obj.getString("imageData")
                                     );
                             startActivityForResult(new Intent(LoginActivity.this, MainActivity.class), REQUEST_CODE);
+                            Bungee.card(this);
                         } else {
                             String code = obj.getString("code");
                             switch (code) {
