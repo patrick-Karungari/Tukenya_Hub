@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout4"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="@drawable/my_selector"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pic_profile"
+            app:civ_border_color="@color/colorAccent"
+            app:civ_border_width="2dp" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+
+        <EditText
+            android:id="@+id/regNum"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/background_editbox"
+            android:drawableEnd="@drawable/regnum"
+            android:drawableTint="@color/colorProgressBar"
+            android:ems="10"
+            android:hint="@string/RegistrationNumber"
+            android:inputType="textCapWords|textCapCharacters"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/colorTextView"
+            android:textColorHint="@color/colorTextView"
+            app:layout_constraintBottom_toTopOf="@+id/password_reg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="24dp"
+            tools:layout_conversion_absoluteWidth="331dp" />
+
+
+        <EditText
+            android:id="@+id/password_reg"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/background_editbox"
+            android:drawableEnd="@drawable/password_lock"
+            android:drawableTint="@color/colorProgressBar"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textVisiblePassword"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/colorTextView"
+            android:textColorHint="@color/colorTextView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/regNum"
+            tools:layout_conversion_absoluteHeight="24dp"
+            tools:layout_conversion_absoluteWidth="331dp" />
+
+
+        <LinearLayout
+            android:id="@+id/root"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password_reg"
+            tools:layout_conversion_absoluteHeight="19dp"
+            tools:layout_conversion_absoluteWidth="167dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/weak"
+                android:layout_width="12dp"
+                android:layout_height="4dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="10dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/medium"
+                android:layout_width="12dp"
+                android:layout_height="4dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="10dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/strong"
+                android:layout_width="12dp"
+                android:layout_height="4dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="10dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/very_strong"
+                android:layout_width="12dp"
+                android:layout_height="4dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="10dp">
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/passwordStrength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="@color/colorSplashText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
