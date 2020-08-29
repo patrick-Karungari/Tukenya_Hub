@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:checkable="false"
+        android:enabled="true"
+        android:title="Refresh"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_addContacts"
+        android:title="@string/AddContacts"
+        android:visible="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_profile"
+        android:checkable="true"
+        android:enabled="true"
+        android:icon="@drawable/account_circle_24"
+        android:title="@string/Profile"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/logout"
+        android:title="@string/sign_out"
+        android:visible="true"
+        app:showAsAction="never" />
+
+
+</menu>

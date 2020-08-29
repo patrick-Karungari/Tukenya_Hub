@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row_system"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/chat_margin_x_small">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/message_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.vanniktech.emoji.EmojiTextView
+            android:id="@+id/message"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web|email"
+            android:background="@drawable/background_bubble_system"
+            android:gravity="center"
+            android:linksClickable="true"
+            android:maxWidth="@dimen/chat_row_system_last_message_text_view_max_width"
+            android:paddingLeft="@dimen/chat_padding_normal"
+            android:paddingTop="@dimen/chat_padding_xx_small"
+            android:paddingRight="@dimen/chat_padding_normal"
+            android:paddingBottom="@dimen/chat_padding_xx_small"
+            android:textColor="@color/background_bubble_text_system"
+            android:textColorLink="@color/color_clickable_link_system"
+            android:textSize="@dimen/chat_row_system_last_message_text_size"
+            app:emojiSize="@dimen/chat_row_system_last_message_emoji_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

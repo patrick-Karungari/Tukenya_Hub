@@ -1,0 +1,4 @@
+include ':Preferences'
+include ':messenger'
+include ':app'
+rootProject.name = "TukenyaHub"

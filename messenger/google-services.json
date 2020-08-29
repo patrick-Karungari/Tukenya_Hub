@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "530856076406",
+    "firebase_url": "https://tukenya-hub-83422.firebaseio.com",
+    "project_id": "tukenya-hub-83422",
+    "storage_bucket": "tukenya-hub-83422.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530856076406:android:11a7c8d975d66f9c406b57",
+        "android_client_info": {
+          "package_name": "com.patrickarungari.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530856076406-mpiasdun2hl10n6gc6h6ch1q7jpjnm27.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.patrickarungari.messenger",
+            "certificate_hash": "421eb7bd871581310ef74096b059e3cfc919488f"
+          }
+        },
+        {
+          "client_id": "530856076406-gliegdd808j389iqvpvhca2cjutc72ed.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeAPk8z0ZIUVqlwbESF2fwZ_ltUK_PgRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530856076406-gliegdd808j389iqvpvhca2cjutc72ed.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
