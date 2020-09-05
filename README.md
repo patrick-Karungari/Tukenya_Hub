@@ -5,6 +5,7 @@ Tukenya Hub APP that I'm currently developing for my final year project at the T
 ![Screenshot_1598472399](https://user-images.githubusercontent.com/37111392/92296979-17d67780-ef43-11ea-8f93-e955565867ff.png)
 ![Screenshot_1598472393](https://user-images.githubusercontent.com/37111392/92296987-2ae94780-ef43-11ea-8dcf-31f42dbe243c.png)
 
+![image](https://user-images.githubusercontent.com/37111392/92297333-e9f33200-ef46-11ea-8afa-890979a1346e.jpg)
 
 
 
